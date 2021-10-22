@@ -24,7 +24,6 @@ let start;
 let end;
 let w, h;
 let path = [];
-let nosolution = false;
 
 function Spot(i,j) {
   this.i = i;
@@ -65,6 +64,18 @@ function Spot(i,j) {
     }
     if(j > 0){
     this.neighbors.push(grid[i] [j-1]);
+    }
+    if(i > 0 && j > 0){
+      this.neighbors.push(grid[i-1] [j-1]);
+    }
+    if(i < cols-1 && j > 0){
+      this.neighbors.push(grid[i+1] [j-1]);
+    }
+    if(i > 0 && j > rows-1){
+      this.neighbors.push(grid[i-1] [j+1]);
+    }
+    if(i < cols-1 && j > rows-1){
+      this.neighbors.push(grid[i+1] [j+1]);
     }
     
   }
@@ -121,14 +132,13 @@ function draw() {
       console.log("Done")
     }
 
-    if(!nosolution){
-      path = [];
-        let temp = current;
-        path.push(temp);
-        while(temp.previous){
-        path.push(temp.previous);
-        temp = temp.previous;
-        }
+    
+    path = [];
+    let temp = current;
+    path.push(temp);
+    while(temp.previous){
+      path.push(temp.previous);
+      temp = temp.previous;
     }
 
     openSet.splice(lowestIndex, 1)
@@ -161,8 +171,8 @@ function draw() {
 
   } else {
     console.log("no solution");
-    nosolution = true;
     noLoop();
+    return;
   }
 
   background(0);
