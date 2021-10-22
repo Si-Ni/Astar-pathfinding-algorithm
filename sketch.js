@@ -1,8 +1,16 @@
 
+/*function removeFromArray(arr, elt){
+  for(var i = arr.length - 1; i>= 0; i--){
+    if(arr[i] == elt){
+      arr.splice(i,1);
+    }
+  }
+}  */
+
 //educated guess
 function heuristic(a, b) {
-  //let d = dist(a.i, a.j, b.i, b.j);
-  let d = abs(a.i-b.i) + abs(a.j-b.j)
+  let d = dist(a.i, a.j, b.i, b.j);
+  //let d = abs(a.i-b.i) + abs(a.j-b.j)
   return d;
 }
 
@@ -16,6 +24,7 @@ let start;
 let end;
 let w, h;
 let path = [];
+let nosolution = false;
 
 function Spot(i,j) {
   this.i = i;
@@ -25,27 +34,39 @@ function Spot(i,j) {
   this.h = 0;
   this.neighbors = [];
   this.previous = undefined;
+  this.wall = false;
+
+  if (random(1) < 0.3) {
+    this.wall = true;
+  }
 
   this.show = function(col) {
     fill(col);
+    if(this.wall) {
+      fill(0);
+    }
     noStroke;
     rect(this.i * w, this.j * h, w - 1, h - 1);
   }
 
   this.addNeighbors = function(grid) {
 
-    if(this.i < cols - 1){
-    this.neighbors.push(grid[this.i+1] [this.j])
+    let i = this.i;
+    let j = this.j;
+
+    if(i < cols - 1){
+    this.neighbors.push(grid[i+1] [j]);
     }
-    if(this.i > 0){
-    this.neighbors.push(grid[this.i-1] [this.j])
+    if(i > 0){
+    this.neighbors.push(grid[i-1] [j]);
     }
     if(j < rows - 1){
-    this.neighbors.push(grid[this.i] [this.j+1])
+    this.neighbors.push(grid[i] [j+1]);
     }
     if(j > 0){
-    this.neighbors.push(grid[this.i] [this.j-1])
+    this.neighbors.push(grid[i] [j-1]);
     }
+    
   }
 }
 
@@ -73,6 +94,8 @@ function setup() {
 
   start = grid[0][0];
   end = grid[cols-1][rows-1];
+  start.wall = false;
+  end.wall = false;
 
   openSet.push(start);
 
@@ -86,7 +109,7 @@ function draw() {
     
     let lowestIndex = 0;
     for(let i = 0; i < openSet.length; i++){
-      if(openSet[i] < openSet[lowestIndex].f) {
+      if(openSet[i].f < openSet[lowestIndex].f) {
         lowestIndex = i;
       }
     }
@@ -98,14 +121,25 @@ function draw() {
       console.log("Done")
     }
 
+    if(!nosolution){
+      path = [];
+        let temp = current;
+        path.push(temp);
+        while(temp.previous){
+        path.push(temp.previous);
+        temp = temp.previous;
+        }
+    }
+
     openSet.splice(lowestIndex, 1)
+    //removeFromArray(openSet, current);
     closedSet.push(current);
 
     let neighbors = current.neighbors;
     for(let i = 0; i < neighbors.length; i++){
       let neighbor = neighbors[i];
 
-        if(!closedSet.includes(neighbor)){
+        if(!closedSet.includes(neighbor) && !neighbor.wall){
           let tempG = current.g + 1;
 
           if(openSet.includes(neighbor)){
@@ -126,7 +160,9 @@ function draw() {
     }
 
   } else {
-
+    console.log("no solution");
+    nosolution = true;
+    noLoop();
   }
 
   background(0);
@@ -147,14 +183,6 @@ function draw() {
 
   for (let i = 0; i < path.length; i++) {
     path[i].show(color(0,0,255));
-  }
-
-  path = [];
-  let temp = current;
-  path.push(temp);
-  while(temp.previous){
-    path.push(temp.previous);
-    temp = temp.previous;
   }
 
 }
