@@ -14,8 +14,8 @@ function heuristic(a, b) {
   return d;
 }
 
-let cols = 25;
-let rows = 25;
+let cols = 50;
+let rows = 50;
 let grid = [];
 
 let openSet = [];
@@ -24,6 +24,7 @@ let start;
 let end;
 let w, h;
 let path = [];
+let diagonal = false;
 
 function Spot(i,j) {
   this.i = i;
@@ -82,7 +83,7 @@ function Spot(i,j) {
 }
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(800, 800);
   
   w = width / cols;
   h = height / rows;
@@ -152,19 +153,23 @@ function draw() {
         if(!closedSet.includes(neighbor) && !neighbor.wall){
           let tempG = current.g + 1;
 
+          let newPath = false;
           if(openSet.includes(neighbor)){
             if(tempG < neighbor.g) {
               neighbor.g = tempG;
+              newPath = true;
             }
           }else {
             neighbor.g = tempG;
+            newPath = true;
             openSet.push(neighbor);
           }
           
-          neighbor.h = heuristic(neighbor, end);    
-          neighbor.f = neighbor.g + neighbor.h
-          neighbor.previous = current;
-
+          if(newPath) {
+            neighbor.h = heuristic(neighbor, end);    
+            neighbor.f = neighbor.g + neighbor.h
+            neighbor.previous = current;
+          }
         }
 
     }
@@ -195,4 +200,10 @@ function draw() {
     path[i].show(color(0,0,255));
   }
 
+  noFill();
+  beginShape();
+  for(var i = 0; i < path.length; i++) {
+    vertex(path[i].i * w + w/2, path[i].j * h + h/2)
+  }
+  endShape();
 }
