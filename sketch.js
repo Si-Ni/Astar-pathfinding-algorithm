@@ -36,7 +36,7 @@ function Spot(i,j) {
   this.previous = undefined;
   this.wall = false;
 
-  if (random(1) < 0.3) {
+  if (random(1) < 0.4) {
     this.wall = true;
   }
 
@@ -74,7 +74,7 @@ function Spot(i,j) {
       this.neighbors.push(grid[i+1] [j-1]);
       this.neighborsDiagonal.push(grid[i+1] [j-1]);
     }
-    if(i > 0 && j > rows-1){
+    if(i > 0 && j < rows-1){
       this.neighbors.push(grid[i-1] [j+1]);
       this.neighborsDiagonal.push(grid[i-1] [j+1]);
     }
@@ -115,8 +115,6 @@ function setup() {
 
   openSet.push(start);
 
-  console.log(grid)
-
 }
 
 function draw() {
@@ -148,7 +146,6 @@ function draw() {
 
     //removeFromArray(openSet, current);
     openSet.splice(lowestIndex, 1)
-    console.log(openSet)
     closedSet.push(current);
 
     let neighbors = current.neighbors;
@@ -159,10 +156,8 @@ function draw() {
           let tempG;
           if(current.neighborsDiagonal.includes(neighbor)) {
             tempG = current.g + 1.41;
-            console.log("diagonal")
           }else {
             tempG = current.g + 1;
-            console.log("not");
           }
 
           let newPath = false;
