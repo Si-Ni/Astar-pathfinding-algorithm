@@ -1,12 +1,4 @@
 
-/*function removeFromArray(arr, elt){
-  for(var i = arr.length - 1; i>= 0; i--){
-    if(arr[i] == elt){
-      arr.splice(i,1);
-    }
-  }
-}  */
-
 //educated guess
 function heuristic(a, b) {
   let d = dist(a.i, a.j, b.i, b.j);
@@ -36,7 +28,7 @@ function Spot(i,j) {
   this.previous = undefined;
   this.wall = false;
 
-  if (random(1) < 0.3) {
+  if (random(1) < 0.0) {
     this.wall = true;
   }
 
@@ -75,7 +67,7 @@ function Spot(i,j) {
     if(i > 0 && j > rows-1){
       this.neighbors.push(grid[i-1] [j+1]);
     }
-    if(i < cols-1 && j > rows-1){
+    if(i < cols-1 && j < rows-1){
       this.neighbors.push(grid[i+1] [j+1]);
     }
     
