@@ -1,3 +1,10 @@
+/*function removeFromArray (arr, elt) {
+  for (let i = arr.length - 1; i >=0; i--){
+    if(arr[i] == elt) {
+      arr.splice(i, 1)
+    }
+  }
+}*/
 
 //educated guess
 function heuristic(a, b) {
@@ -25,10 +32,11 @@ function Spot(i,j) {
   this.g = 0;
   this.h = 0;
   this.neighbors = [];
+  this.neighborsDiagonal = [];
   this.previous = undefined;
   this.wall = false;
 
-  if (random(1) < 0.0) {
+  if (random(1) < 0.3) {
     this.wall = true;
   }
 
@@ -60,15 +68,19 @@ function Spot(i,j) {
     }
     if(i > 0 && j > 0){
       this.neighbors.push(grid[i-1] [j-1]);
+      this.neighborsDiagonal.push(grid[i-1] [j-1]);
     }
     if(i < cols-1 && j > 0){
       this.neighbors.push(grid[i+1] [j-1]);
+      this.neighborsDiagonal.push(grid[i+1] [j-1]);
     }
     if(i > 0 && j > rows-1){
       this.neighbors.push(grid[i-1] [j+1]);
+      this.neighborsDiagonal.push(grid[i-1] [j+1]);
     }
     if(i < cols-1 && j < rows-1){
       this.neighbors.push(grid[i+1] [j+1]);
+      this.neighborsDiagonal.push(grid[i+1] [j+1]);
     }
     
   }
@@ -134,8 +146,9 @@ function draw() {
       temp = temp.previous;
     }
 
-    openSet.splice(lowestIndex, 1)
     //removeFromArray(openSet, current);
+    openSet.splice(lowestIndex, 1)
+    console.log(openSet)
     closedSet.push(current);
 
     let neighbors = current.neighbors;
@@ -143,7 +156,14 @@ function draw() {
       let neighbor = neighbors[i];
 
         if(!closedSet.includes(neighbor) && !neighbor.wall){
-          let tempG = current.g + 1;
+          let tempG;
+          if(current.neighborsDiagonal.includes(neighbor)) {
+            tempG = current.g + 1.41;
+            console.log("diagonal")
+          }else {
+            tempG = current.g + 1;
+            console.log("not");
+          }
 
           let newPath = false;
           if(openSet.includes(neighbor)){
