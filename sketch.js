@@ -35,15 +35,29 @@ function Spot(i,j) {
   this.neighborsDiagonal = [];
   this.previous = undefined;
   this.wall = false;
+  this.difficulty = 0;
 
-  if (random(1) < 0.4) {
+  if (random(1) < 0.4) {                                              //walls
     this.wall = true;
+  }
+
+  if(random(1) < 0.3 && this.wall == false) {                         //obstacls
+    this.difficulty = 2
   }
 
   this.show = function(col) {
     fill(col);
     if(this.wall) {
       fill(0);
+    }
+    if(this.difficulty > 0 && path.includes(this)){
+      fill(0, 0, 150);
+    }
+    if(this.difficulty > 0 && !path.includes(this)){
+      fill(GRAY);
+    }
+    if(this.difficulty > 0 && closedSet.includes(this) && !path.includes(this)){
+      fill(100, 0, 0)
     }
     noStroke;
     rect(this.i * w, this.j * h, w - 1, h - 1);
@@ -155,9 +169,9 @@ function draw() {
         if(!closedSet.includes(neighbor) && !neighbor.wall){
           let tempG;
           if(current.neighborsDiagonal.includes(neighbor)) {
-            tempG = current.g + 1.41;
+            tempG = current.g + 1.41 + current.difficulty;
           }else {
-            tempG = current.g + 1;
+            tempG = current.g + 1 + current.difficulty;
           }
 
           let newPath = false;
